@@ -2,7 +2,7 @@ import os
 class test():
 
     def path_traversal(self):
-        for root, dirs, files in os.walk('.'):
+        for root, _, files in os.walk('.'):
             for name in files:
                 yield(os.path.join(root,name))
 

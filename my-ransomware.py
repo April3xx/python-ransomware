@@ -23,7 +23,7 @@ class ransomware(object):
         return self.cryptor.decrypt(data)
 
     def path_traversal(self,path):
-        for root, dirs, files in os.walk(path):
+        for root, _, files in os.walk(path):
             for name in files:
                 yield(os.path.join(root,name))
 
