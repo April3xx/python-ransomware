@@ -1,6 +1,6 @@
 # The default ``config.py``
 # flake8: noqa
-
+#fasdfasd
 
 def set_prefs(prefs):
     """This function is called before opening the project"""
