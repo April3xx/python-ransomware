@@ -38,22 +38,8 @@ class filelist():
                         self.filecount += 1
             f.write(str(self.filecount))
 
-    def extest(self):
-        with open("test.txt",'w') as f:
-            f.seek(0)
-            f.truncate()
-            for i in range(100):
-                f.writelines(str(i)+"\n")
-
-    def test(self):
-        linecount=0
-        with open("testnum",'w') as f:
-            for i in range(489067):
-                f.write(str(i)+'\n')
-                linecount+=1
-            f.write(str(linecount))
-
-attk = filelist()
-attk.findext('C:\\')
+if __name__ == "__main__":
+    attk = filelist()
+    attk.findext('C:\\')
 #test()
 #findext()
